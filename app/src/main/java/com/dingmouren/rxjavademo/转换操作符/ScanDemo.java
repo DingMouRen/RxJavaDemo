@@ -1,6 +1,4 @@
-package com.dingmouren.rxjavademo.变换操作符;
-
-import java.sql.SQLOutput;
+package com.dingmouren.rxjavademo.转换操作符;
 
 import rx.Observable;
 import rx.functions.Action1;

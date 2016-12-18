@@ -1,7 +1,6 @@
-package com.dingmouren.rxjavademo.变换操作符;
+package com.dingmouren.rxjavademo.转换操作符;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
