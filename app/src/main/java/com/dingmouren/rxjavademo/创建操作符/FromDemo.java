@@ -9,7 +9,7 @@ import rx.Subscriber;
  * Created by dingmouren on 2016/12/17.
  *  From操作符可以转换Future、Iterable和数组，对于Iterable和数组，产生的Observable会发射Iterable或者数组的每一项数据
  *  对于Future，Observable会发射Future.get()方法返回的单个数据，还支持设置超时时间，时间单位，如果到时间没有返回值，就发射错误通知，
- *  另外还可以通过设置Scheduler来管理这个Future,查看from()的构造方法就明白了
+ *  另外还可以通过设置Scheduler来管理这个Future,查看from()的重载方法就明白了
  *
  */
 

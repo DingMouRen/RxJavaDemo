@@ -8,7 +8,7 @@ import rx.Subscriber;
  *  Just :创建一个发射指定值得Observable
  *  Just只是简单的将数据原样发射，下面就分两种情况来说明，第一种是Int类型的值，第二种是Int[]数组，结果是原来的数据是什么样，发射出来的就是什么样，即使传入null,也会给你发射出一个null。
  *  它可以接受1到9个参数，返回一个按照参数列表顺序发射数据的Observable
- *  操作符form()是将数组或者Iterable中的元素取出后逐个发射
+ *  操作符from()是将数组或者Iterable中的元素取出后逐个发射
  */
 
 public class JustDemo {

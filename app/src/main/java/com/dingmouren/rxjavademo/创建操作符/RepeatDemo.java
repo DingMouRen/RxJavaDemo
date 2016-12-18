@@ -6,7 +6,7 @@ import rx.schedulers.Schedulers;
 
 /**
  * Created by dingmouren on 2016/12/17.
- *  repeat:创建一个发射特定数据重复多次的Observable,有多个构造函数
+ *  repeat:创建一个发射特定数据重复多次的Observable,有多个重载方法
  *  默认在tranpoline调度器上运行，当其他排队的任务完成后，在当前线程排队开始执行，在这的当前线程是main,可以通过参数执行运行所在的线程
  */
 
