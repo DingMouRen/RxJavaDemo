@@ -28,11 +28,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         tv = (TextView) findViewById(R.id.tv);
 
-//        timerDemo();
+        timerDemo();
 //        intervalDemo();
 //        switchMapDemo();
 //        groupByDemo();
-        windowDemo();
+//        windowDemo();
+//        debounceDemo();
     }
 
     /**
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * switchMap():类似于flatMap(),有一点不同，只监视当前Observable，或者是最后发射的数据。需要延时执行，当是延时是0 的时候回发射第一个数据，延时是大于0的任何值都是发射最后一个值
+     * switchMap操作符:类似于flatMap(),有一点不同，只监视当前Observable，或者是最后发射的数据。需要延时执行，当是延时是0 的时候回发射第一个数据，延时是大于0的任何值都是发射最后一个值
      * 有一个使用场景：搜索的时候，在输入完毕之后再去请求数据，大可不必没每输入一个都要发送请求。
      */
     private void switchMapDemo(){
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * groupBy():对原来Observable发射的数据进行分组，形成一个GroupedObservable的结果集，GroupedObservable.getKey()可以获取键,
+     * groupBy操作符:对原来Observable发射的数据进行分组，形成一个GroupedObservable的结果集，GroupedObservable.getKey()可以获取键,
      * 注意：由于结果集中的GroupedObservable是把分组结果缓存起来，如果对每一个GroupedObservable不进行处理（既不订阅也不对其进行别的操作符运算）
      * 就有可能出现内存泄漏，所以如果不对GroupedObservable进行处理，最好对其使用操作符take(0)处理
      *
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * window():类似于buffer()操作符，区别在于buffer操作符产生的结果是List缓存，而window()操作符产生的是一个Observable对象
+     * window操作符:类似于buffer()操作符，区别在于buffer操作符产生的结果是List缓存，而window()操作符产生的是一个Observable对象
      * 订阅者可以对这个产生的Observable对象重新进行订阅处理
      * window操作符有很多重载方法
      */
@@ -146,6 +147,38 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    /**
+     *  debounce操作符：源Observable每发射一个数据项，如果在debounce规定的间隔时间内Observable没有发射新的数据项，debounce就把这个结果提交给订阅者处理，如果在规定的间隔时间内产生了其他结果
+     *  ，就忽略掉发射的这个数据,通过制定的时间间隔来限流，可以过滤掉发射速率过快的数据项，默认在computatiion调度器上执行，可以指定执行线程。
+     *  注意：如果源Observable发射最后一个数据后，在debounce规定的时间间隔内调用了onCompleted，那么通过debounce操作符就把这个结果提交给订阅者
+     *  throttleWithTimeOut使用也是调用了debounce操作符来实现
+     */
+    private void debounceDemo(){
+        Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                if (subscriber.isUnsubscribed()) return;//如果没有订阅者就直接返回
+                try {
+                    //发射数据的时间间隔：100~900毫秒，
+                    for (int i = 0; i < 10; i++) {
+                        subscriber.onNext(i);
+                        Thread.sleep(i * 100);
+                    }
+                    subscriber.onCompleted();
+                } catch (InterruptedException e) {
+                    subscriber.onError(e);
+                }
+            }
+        }).subscribeOn(Schedulers.newThread())
+                .debounce(400, TimeUnit.MILLISECONDS)//超时时间为400毫秒，预期结果：时间间隔在400毫秒以上的数据都会提交给订阅者，其他的不会。
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer integer) {
+                        System.out.println("debounce onNext:" + integer + " 所在线程：" + Thread.currentThread().getName());
+                    }
+                });
     }
 }
 

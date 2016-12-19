@@ -2,6 +2,7 @@ package com.dingmouren.rxjavademo.转换操作符;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
@@ -18,19 +19,9 @@ public class ConcatMapDemo {
             public Observable<Integer> call(Integer[] integers) {
                 return Observable.from(integers);
             }
-        }).subscribe(new Subscriber<Integer>() {
+        }).subscribe(new Action1<Integer>() {
             @Override
-            public void onCompleted() {
-                System.out.println("onCompleted:完成");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                System.out.println("onError:" + e.toString());
-            }
-
-            @Override
-            public void onNext(Integer integer) {
+            public void call(Integer integer) {
                 System.out.println("onNext:" + integer + " 所在线程：" + Thread.currentThread().getName());
             }
         });

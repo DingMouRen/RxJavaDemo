@@ -4,6 +4,7 @@ import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Action1;
 
 /**
  * Created by dingmouren on 2016/12/18.
@@ -17,23 +18,12 @@ public class BufferDemo {
     public static void main(String[] args) {
         //1.buffer(count):以列表（List集合）的形式发射非重叠（不是指没有重复元素，而是集合的界限）的缓存数据，每一个缓存（List集合）最多包含来自原始Observable的count个数据（最后发射的列表List可能少于count个，最后一个list可能没有count个元素），此处的count相当于集合的size()
         System.out.println("buffer(count) ");
-        Observable.range(1, 6).buffer(2).subscribe(new Subscriber<List<Integer>>() {
+        Observable.range(1, 6).buffer(2).subscribe(new Action1<List<Integer>>() {
             @Override
-            public void onCompleted() {
-                System.out.println("onCompleted:完成");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                System.out.println("onError:" + e.toString());
-            }
-
-            @Override
-            public void onNext(List<Integer> integers) {
+            public void call(List<Integer> integers) {
                 System.out.println("onNnext:" + integers.toString());
             }
         });
-
         /**
          * 2.buffer(count,skip) :有这么一种情况 buffer(count) 等价于 buffer(count,count).
          * 详细说一下： buffer(2)输出为 【1,2】【3,4】【5,6】 那么buffer(2,3)就要这么算：首先从第一项开始缓存2个数据，【1,2】，此时的skip=3，意思是第二个集合的第一项是第skip+1项的数据，也就是第四个,集合长度是2，结果就是【4,5】，
@@ -41,20 +31,10 @@ public class BufferDemo {
          */
         System.out.println("- - - - - - - - - - - - - - - - - - - - - ");
         System.out.println("buffer(count,skip) ");
-        Observable.range(1, 6).buffer(3, 2).subscribe(new Subscriber<List<Integer>>() {
+        Observable.range(1, 6).buffer(3, 2).subscribe(new Action1<List<Integer>>() {
             @Override
-            public void onCompleted() {
-                System.out.println("onCompleted:完成");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                System.out.println("onError:" + e.toString());
-            }
-
-            @Override
-            public void onNext(List<Integer> integers) {
-                System.out.println(integers.toString());
+            public void call(List<Integer> integers) {
+                System.out.println("onNnext:" + integers.toString());
             }
         });
     }

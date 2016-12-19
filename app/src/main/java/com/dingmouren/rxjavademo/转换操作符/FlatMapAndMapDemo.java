@@ -5,6 +5,7 @@ import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
@@ -29,19 +30,9 @@ public class FlatMapAndMapDemo {
                 //转换的函数放在这里
                 return Observable.from(student.getCourse());
             }
-        }).subscribe(new Subscriber< String>() {
+        }).subscribe(new Action1<String>() {
             @Override
-            public void onCompleted() {
-                System.out.println("onCompleted:完成");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                System.out.println("onError:" + e.toString());
-            }
-
-            @Override
-            public void onNext( String cour) {
+            public void call(String cour) {
                 System.out.println("onNext:" + cour + "  所在线程：" + Thread.currentThread().getName());
             }
         });
@@ -55,22 +46,13 @@ public class FlatMapAndMapDemo {
                 student.setName("小刚");
                 return student;
             }
-        }).subscribe(new Subscriber<Student>() {
+        }).subscribe(new Action1<Student>() {
             @Override
-            public void onCompleted() {
-                System.out.println("onCompleted:完成");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                System.out.println("onError:" + e.toString());
-            }
-
-            @Override
-            public void onNext(Student student) {
+            public void call(Student student) {
                 System.out.println("onNext:" + student.getName() + " 所在线程：" + Thread.currentThread().getName());
             }
         });
+
     }
 }
 
