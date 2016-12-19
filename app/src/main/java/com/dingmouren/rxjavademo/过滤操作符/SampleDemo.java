@@ -21,7 +21,7 @@ import rx.schedulers.Schedulers;
  * ThrottleFirst:  1,4,7
  */
 
-public class SimpleDemo {
+public class SampleDemo {
     public static void main(String[] args){
         //smaple
         Observable.create(new Observable.OnSubscribe<Integer>() {
