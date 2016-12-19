@@ -44,7 +44,6 @@ public class SkipDemo {
             @Override
             public void call(Integer integer) {
                 System.out.println("skip(long,TimeUnit) onNext:" + integer + " 所在线程：" + Thread.currentThread().getName());
-
             }
         });
     }

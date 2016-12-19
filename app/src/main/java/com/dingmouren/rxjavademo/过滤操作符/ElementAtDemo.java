@@ -22,7 +22,6 @@ public class ElementAtDemo {
             @Override
             public void call(Integer integer) {
                 System.out.println("elementAtOrDefault onNext:" + integer + " 所在线程：" + Thread.currentThread().getName());
-
             }
         });
     }

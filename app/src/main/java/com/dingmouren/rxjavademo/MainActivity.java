@@ -28,12 +28,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         tv = (TextView) findViewById(R.id.tv);
 
-        timerDemo();
+//        timerDemo();
 //        intervalDemo();
 //        switchMapDemo();
 //        groupByDemo();
 //        windowDemo();
-//        debounceDemo();
+        debounceDemo();
     }
 
     /**
