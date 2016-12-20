@@ -45,7 +45,6 @@ public class CombineLatestDemo {
                 System.out.println("combineLatest(o1,o2,Func2) onNext:" + integer);
             }
         });
-
         System.out.println("- - - - - - - - - ");
         Observable.combineLatest(ob1, ob2, ob3, new Func3<Integer, Integer, Integer, Integer>() {
             @Override//这里进行合并的规则，可以用函数进行运算返回一个数据
@@ -59,7 +58,6 @@ public class CombineLatestDemo {
                 System.out.println("combineLatest(o1,o2,o3,Func3) onNext:" + integer);
             }
         });
-
         System.out.println("- - - - - - - - - ");
         Observable.combineLatest(list, new FuncN<String>() {
             @Override//这里进行合并的规则，可以用函数进行运算返回一个数据
@@ -68,7 +66,6 @@ public class CombineLatestDemo {
                for (Object value : args){
                    System.out.println("combineLatest(List,FuncN) value:" + value);
                    concat += value;
-
                }
                 return concat;
             }

@@ -15,6 +15,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.observables.GroupedObservable;
 import rx.schedulers.Schedulers;
 
@@ -35,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
 //        windowDemo();
 //        debounceDemo();
 //        mergeDemo();
-        switchMapDemo();
+//        switchOnNextDemo();
+//        retryWhenDemo();
     }
 
     /**
@@ -202,6 +204,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     *
+     */
     private void switchOnNextDemo(){
         //每隔500毫秒产生一个observable
         Observable<Observable<Long>> observable = Observable.timer(0, 500, TimeUnit.MILLISECONDS).map(new Func1<Long, Observable<Long>>() {
@@ -231,6 +236,50 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNext(Long aLong) {
                 System.out.println("Next:" + aLong);
+            }
+        });
+    }
+
+    private void retryWhenDemo(){
+        Observable<Integer> observable = Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                System.out.println("subscribing");
+                subscriber.onError(new RuntimeException("always fails"));
+            }
+        });
+
+        observable.retryWhen(new Func1<Observable<? extends Throwable>, Observable<?>>() {
+            @Override
+            public Observable<?> call(Observable<? extends Throwable> observable) {
+                return observable.zipWith(Observable.range(1, 3), new Func2<Throwable, Integer, Integer>() {
+                    @Override
+                    public Integer call(Throwable throwable, Integer integer) {
+                        return integer;
+                    }
+                }).flatMap(new Func1<Integer, Observable<?>>() {
+                    @Override
+                    public Observable<?> call(Integer integer) {
+                        System.out.println("delay retry by " + integer + " second(s)");
+                        //每一秒中执行一次
+                        return Observable.timer(integer, TimeUnit.SECONDS);
+                    }
+                });
+            }
+        }).subscribe(new Subscriber<Integer>() {
+            @Override
+            public void onCompleted() {
+                System.out.println("retryWhen onComplete.");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                System.err.println("retryWhen onError: " + e.getMessage());
+            }
+
+            @Override
+            public void onNext(Integer value) {
+                System.out.println("retryWhen onNext:" + value);
             }
         });
     }
