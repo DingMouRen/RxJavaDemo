@@ -33,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
 //        switchMapDemo();
 //        groupByDemo();
 //        windowDemo();
-        debounceDemo();
+//        debounceDemo();
+//        mergeDemo();
+        switchMapDemo();
     }
 
     /**
@@ -180,6 +182,59 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    /**
+     *  merge操作符将多个Observalbe发射的数据项，合并到一个Observable中再发射出去，可能会让合并的Observable发射的数据交错（concat是连接不会出现交错），
+     *  如果在合并的途中出现错误，就会立即将错误提交给订阅者，将终止合并后的Observable
+     *  mergeDelayError操作符类似于merge操作符，唯一不同就是如果在合并途中出现错误，不会立即发射错误通知，而是保留错误直到合并后的Observable将所有的数据发射完成，
+     *  此时才会将onError提交给订阅者。
+     *  合并多个Observable也可以通过传递一个Observalbe列表List、数组。
+     */
+    private void mergeDemo(){
+        Observable<Integer> ob1 = Observable.just(1,2,3).delay(100, TimeUnit.MILLISECONDS);
+        Observable<Integer> ob2 = Observable.just(4,5,6)/*.delay(100, TimeUnit.MILLISECONDS)*/;
+
+        Observable.merge(ob1,ob2).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                System.out.println("merge(ob1,ob2) onNext:" + integer);
+            }
+        });
+    }
+
+    private void switchOnNextDemo(){
+        //每隔500毫秒产生一个observable
+        Observable<Observable<Long>> observable = Observable.timer(0, 500, TimeUnit.MILLISECONDS).map(new Func1<Long, Observable<Long>>() {
+            @Override
+            public Observable<Long> call(Long aLong) {
+                //每隔200毫秒产生一组数据（0,10,20,30,40)
+                return Observable.timer(0, 200, TimeUnit.MILLISECONDS).map(new Func1<Long, Long>() {
+                    @Override
+                    public Long call(Long aLong) {
+                        return aLong * 10;
+                    }
+                }).take(5);
+            }
+        }).take(2);
+
+        Observable.switchOnNext(observable).subscribe(new Subscriber<Long>() {
+            @Override
+            public void onCompleted() {
+                System.out.println("Sequence complete.");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+
+            @Override
+            public void onNext(Long aLong) {
+                System.out.println("Next:" + aLong);
+            }
+        });
+    }
+
 }
 
 
