@@ -30,5 +30,6 @@ dependencies {
     // Because RxAndroid releases are few and far between, it is recommended you also
     // explicitly depend on RxJava's latest version for bug fixes and new features.
     compile 'io.reactivex:rxjava:1.1.6'
+    compile 'io.reactivex:rxjava-math:1.0.0'
     compile 'com.android.support:design:25.0.1'
 }
