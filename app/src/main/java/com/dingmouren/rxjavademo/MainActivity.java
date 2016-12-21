@@ -1,6 +1,7 @@
 package com.dingmouren.rxjavademo;
 
 import android.os.SystemClock;
+import android.support.annotation.IntegerRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,7 +10,9 @@ import android.widget.TextView;
 import java.sql.SQLOutput;
 import java.util.concurrent.TimeUnit;
 
+import rx.Notification;
 import rx.Observable;
+import rx.Observer;
 import rx.Scheduler;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -37,7 +40,10 @@ public class MainActivity extends AppCompatActivity {
 //        debounceDemo();
 //        mergeDemo();
 //        switchOnNextDemo();
-//        retryWhenDemo();
+//        delayDemo();
+//        takeUntilDemo();
+//        skipUntilDemo();
+        takeWhileDemo();
     }
 
     /**
@@ -240,50 +246,82 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void retryWhenDemo(){
-        Observable<Integer> observable = Observable.create(new Observable.OnSubscribe<Integer>() {
+    /**
+     * delay操作符将源Observable对象延时指定时间后再发射数据，可以指定执行的线程，delay不会延迟onError通知，会延时onComplete通知
+     */
+    private void delayDemo(){
+        Observable.just(1,2,3).delay(5,TimeUnit.SECONDS,AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-                System.out.println("subscribing");
-                subscriber.onError(new RuntimeException("always fails"));
+            public void call(Integer integer) {
+                System.out.println("delay(long,TimeUnit) onNext : " + integer + " 所在线程："+ Thread.currentThread().getName());
             }
         });
-
-        observable.retryWhen(new Func1<Observable<? extends Throwable>, Observable<?>>() {
+        System.out.println("- - - - - - - - - -");
+        Observable.just(1,2,3).delay(new Func1<Integer, Observable<Integer>>() {
             @Override
-            public Observable<?> call(Observable<? extends Throwable> observable) {
-                return observable.zipWith(Observable.range(1, 3), new Func2<Throwable, Integer, Integer>() {
-                    @Override
-                    public Integer call(Throwable throwable, Integer integer) {
-                        return integer;
-                    }
-                }).flatMap(new Func1<Integer, Observable<?>>() {
-                    @Override
-                    public Observable<?> call(Integer integer) {
-                        System.out.println("delay retry by " + integer + " second(s)");
-                        //每一秒中执行一次
-                        return Observable.timer(integer, TimeUnit.SECONDS);
-                    }
-                });
+            public Observable<Integer> call(Integer integer) {
+                System.out.println("delay(Func1) integet:" + integer);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return Observable.just(integer);
             }
-        }).subscribe(new Subscriber<Integer>() {
+        }).subscribe(new Action1<Integer>() {
             @Override
-            public void onCompleted() {
-                System.out.println("retryWhen onComplete.");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                System.err.println("retryWhen onError: " + e.getMessage());
-            }
-
-            @Override
-            public void onNext(Integer value) {
-                System.out.println("retryWhen onNext:" + value);
+            public void call(Integer integer) {
+                System.out.println("delay(Func1) onNext:" +  integer);
             }
         });
     }
 
+    /**
+     * takeUntil操作符：假设源Observable在一直发射数据，在第二个Observable发射数据或者终止了，操作符就丢弃源Observable发射的
+     * 任何数据，时间点就是第二个Observable发射数据或者直接终止了。
+     * 还有一个变体takeUntil(Func1) 通过一个函数来判断是佛需要终止发射数据，跟takeWhile相似
+     */
+    private void takeUntilDemo() {
+        Observable<String> ob1 = Observable.just("一", "二", "三").delay(3, TimeUnit.SECONDS);
+        Observable.interval(0, 1, TimeUnit.SECONDS).takeUntil(ob1).subscribe(new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                System.out.println("takeUntil(ob) onNext:" + aLong);
+            }
+        });
+    }
+
+    /**
+     * skipUntil操作符监听源Observable，但是不会提交数据项给订阅者，直到第二个Observable开始发射数据，才会将源Observable发射的数据项提交给订阅者
+     */
+    private void skipUntilDemo(){
+        Observable<String> ob1 = Observable.just("一", "二", "三").delay(3, TimeUnit.SECONDS);
+        Observable.interval(0, 1, TimeUnit.SECONDS).skipUntil(ob1).subscribe(new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                System.out.println("skipUntil(ob) onNext:" + aLong);
+            }
+        });
+    }
+
+    /**
+     * takeWhile操作符：假设源Observable一直在发射数据，takeWhile(Func1)直到函数中的条件不成立时，就会丢弃源Observable发射的数据、
+     * 时间点就是函数中的条件不成立
+     */
+    private void takeWhileDemo(){
+        Observable.interval(0,1,TimeUnit.SECONDS).takeWhile(new Func1<Long, Boolean>() {
+            @Override
+            public Boolean call(Long aLong) {
+                return aLong < 6;
+            }
+        }).subscribe(new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                System.out.println("takeWhile(Func1) onNext:" + aLong);
+            }
+        });
+    }
 }
+
 
 
