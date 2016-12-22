@@ -8,7 +8,7 @@ import rx.functions.Action1;
  * count操作符计算源Observable发射数据项的数量，将这个数量提交给订阅者
  */
 
-public class AverageDemo {
+public class CountDemo {
     public static void main(String[] args){
         Observable.just(1,2,3).count().subscribe(new Action1<Integer>() {
             @Override

@@ -32,4 +32,6 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.6'
     compile 'io.reactivex:rxjava-math:1.0.0'
     compile 'com.android.support:design:25.0.1'
+    compile 'io.reactivex:rxjava-async-util:0.21.0'
+    compile 'io.reactivex:rxjava-string:1.1.1'
 }

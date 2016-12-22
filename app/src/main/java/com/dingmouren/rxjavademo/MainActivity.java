@@ -7,7 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLOutput;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import rx.Notification;
@@ -15,13 +20,17 @@ import rx.Observable;
 import rx.Observer;
 import rx.Scheduler;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Action2;
 import rx.functions.Func1;
 import rx.functions.Func2;
+import rx.observables.ConnectableObservable;
 import rx.observables.GroupedObservable;
+import rx.observables.StringObservable;
 import rx.schedulers.Schedulers;
-
+import rx.util.async.Async;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -43,7 +52,11 @@ public class MainActivity extends AppCompatActivity {
 //        delayDemo();
 //        takeUntilDemo();
 //        skipUntilDemo();
-        takeWhileDemo();
+//        takeWhileDemo();
+//        fromCallableDemo();
+//        fromRunnableDemo();
+//        runAsyncDemo();
+        fromDemo();
     }
 
     /**
@@ -321,6 +334,91 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * fromCallable操作符将一个Callable转换为Observable，当一个订阅者订阅时，它执行这个Callable并发射Callable的返回值，或者发射异常
+     */
+    private void fromCallableDemo(){
+        Async.fromCallable(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                System.out.println("fromCallable(Callable) call函数所在线程：" + Thread.currentThread().getName());
+                return 1;
+            }
+        }).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                System.out.println("fromCallable(Callable) onNext:" + integer +" 所在线程：" + Thread.currentThread().getName());
+            }
+        });
+    }
+
+    /**
+     * fromRunnable操作符将一个Runnable转换成Observable,当一个订阅者订阅时，它执行这个Runnable并发射Runnable发射的值
+     */
+    private void fromRunnableDemo(){
+        final int result = 1;
+        Async.fromRunnable(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("fromRunnable(Runnable,Object) 所在线程：" +Thread.currentThread().getName());
+                System.out.println("fromRunnable 计算开始" );
+                for (int i = 0; i <10 ; i++) {
+                    System.out.println("fromRunnable 计算进行中：" + i);
+                }
+                System.out.println("fromRunnable 计算结束" );
+            }
+        }, result).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                System.out.println("fromRunnable(Runnable,Object) onNext：" +integer+" 所在线程："+Thread.currentThread().getName());
+
+            }
+        });
+    }
+
+    private void runAsyncDemo(){
+        Async.runAsync(Schedulers.newThread(), new Action2<Observer<? super Integer>, Subscription>() {
+            @Override
+            public void call(Observer<? super Integer> observer, Subscription subscription) {
+                int i = 1;
+                while(!subscription.isUnsubscribed()){
+                    System.out.println("runAsync(Schedulers,Action2) observer.onNext 所在线程："+ Thread.currentThread().getName());
+                    observer.onNext(i);
+                    i++;
+                    if (i == 3){
+                        subscription.unsubscribe();
+                        System.out.println("runAsync(Schedulers,Action2) observer.onCompleted 所在线程："+ Thread.currentThread().getName());
+                        observer.onCompleted();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * from操作符将一个字符流或者Reader转换成一个发射字节数据或者字符串的Observable
+     */
+    private void fromDemo(){
+        try {
+            InputStream fis = getAssets().open("data.txt");
+           /* int length = fis.available();
+            byte[] buffer = new byte[length];
+            fis.read(buffer);
+            fis.close();
+            String str = new String(buffer,"utf-8");
+            System.out.println("from" + str);*/
+            StringObservable.from(fis).subscribe(new Action1<byte[]>() {
+                @Override
+                public void call(byte[] bytes) {
+                    System.out.println("from(InputStream) onNext:" + new String(bytes ).toString());
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 
 
