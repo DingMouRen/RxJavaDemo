@@ -17,6 +17,7 @@ import com.dingmouren.rxjavademo.rx.RxBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscription;
 import rx.functions.Action1;
 
 /**
@@ -27,6 +28,7 @@ public class FragmentRight extends Fragment {
     @BindView(R.id.tv_rxbus) TextView tvRxBus;
     private AnimatorSet animatorSet;
     private RxBus rxBus;
+    private Subscription subscription;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,7 +41,7 @@ public class FragmentRight extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         rxBus = ((ExampleActivity)getActivity()).getRxBus();
-        rxBus.toObservable(ClickEvent.class).subscribe(new Action1<ClickEvent>() {
+        subscription = rxBus.toObservable(ClickEvent.class).subscribe(new Action1<ClickEvent>() {
             @Override
             public void call(ClickEvent clickEvent) {
                 sartAnimation();
@@ -55,4 +57,12 @@ public class FragmentRight extends Fragment {
         animatorSet.start();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //解绑，防止内存泄漏
+        if (null != subscription && !subscription.isUnsubscribed()){
+            subscription.unsubscribe();
+        }
+    }
 }
