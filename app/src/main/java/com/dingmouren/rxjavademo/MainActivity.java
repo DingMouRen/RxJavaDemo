@@ -5,7 +5,10 @@ import android.support.annotation.IntegerRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
+
+import com.dingmouren.rxjavademo.examples.ExampleActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,13 +37,17 @@ import rx.util.async.Async;
 
 
 public class MainActivity extends AppCompatActivity {
-    TextView tv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tv = (TextView) findViewById(R.id.tv);
-
+        findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ExampleActivity.newInstance(MainActivity.this);
+                finish();
+            }
+        });
 //        timerDemo();
 //        intervalDemo();
 //        switchMapDemo();
@@ -56,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 //        fromCallableDemo();
 //        fromRunnableDemo();
 //        runAsyncDemo();
-        fromDemo();
+//        fromDemo();
     }
 
     /**
