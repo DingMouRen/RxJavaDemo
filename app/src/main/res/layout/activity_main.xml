@@ -14,6 +14,7 @@
         android:id="@+id/btn1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="加法运算"
+        android:text="RxJava的使用"
+        android:textAppearance="@style/TextLowerCase"
           />
 </RelativeLayout>
