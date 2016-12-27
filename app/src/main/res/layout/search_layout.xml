@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_marginTop="8dp"
+    android:background="@android:color/white"
+    android:layout_height="match_parent">
+    <TextView
+        style="@style/TextViewTitleStyle"
+        android:text="3.搜索"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <!--
+        自定义光标和下划线的颜色，
+        android:textCursorDrawable="@null"
+        android:background="@drawable/selector_edittext"
+        -->
+        <EditText
+            android:id="@+id/edit_search"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/selector_edittext"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            />
+        <ImageButton
+            android:id="@+id/img_delete"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/selector_delete_search"
+            android:layout_gravity="center_vertical"
+            android:tint="@android:color/white"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            />
+    </LinearLayout>
+    <ViewStub
+        android:id="@+id/viewstub_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@layout/search_content"
+        android:inflatedId="@+id/search_content"
+        />
+</LinearLayout>

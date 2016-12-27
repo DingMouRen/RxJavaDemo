@@ -1,10 +1,8 @@
-package com.dingmouren.rxjavademo.rx;
+package com.dingmouren.rxjavademo.examples.rx;
 
 import rx.Observable;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 /**
  * Created by dingmouren on 2016/12/26.

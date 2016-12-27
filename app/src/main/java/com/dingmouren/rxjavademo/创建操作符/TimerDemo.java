@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
+//import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by dingmouren on 2016/12/17.

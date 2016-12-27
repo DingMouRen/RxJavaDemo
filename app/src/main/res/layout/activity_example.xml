@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2f2f2"
+    android:scrollbars="none"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <!--加法运算-->
+        <include layout="@layout/sum_layout"/>
+        <!--Rxbus-->
+        <include layout="@layout/rxbus_layout"/>
+        <!--搜索框-->
+        <include layout="@layout/search_layout"/>
+        <!--验证表单-->
+        <include layout="@layout/form_layout"/>
+    </LinearLayout>
+
+</ScrollView>

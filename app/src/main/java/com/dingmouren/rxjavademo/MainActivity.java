@@ -24,7 +24,6 @@ import rx.Observer;
 import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Action2;
 import rx.functions.Func1;
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
      * 默认在computation调度器上运行，可以通过参数指定运行的线程
      */
     private void timerDemo(){
-        Observable.timer(5, TimeUnit.SECONDS, AndroidSchedulers.mainThread()).subscribe(new Subscriber<Long>() {
+        Observable.timer(5, TimeUnit.SECONDS, Schedulers.immediate()).subscribe(new Subscriber<Long>() {
             @Override
             public void onCompleted() {
                 System.out.println("timer onCompleted:");
@@ -97,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
      *
      */
     private void intervalDemo(){
-        Observable.interval(3,2,TimeUnit.SECONDS, AndroidSchedulers.mainThread()).subscribe(new Subscriber<Long>() {
+        Observable.interval(3,2,TimeUnit.SECONDS, Schedulers.immediate()).subscribe(new Subscriber<Long>() {
             @Override
             public void onCompleted() {
                 System.out.println("interval onCompleted:");
@@ -126,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
                 return Observable.just(integer).delay(0, TimeUnit.MILLISECONDS);
             }
-        }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+        }).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
                 System.out.println("switchMap onNext:" + integer);
@@ -270,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
      * delay操作符将源Observable对象延时指定时间后再发射数据，可以指定执行的线程，delay不会延迟onError通知，会延时onComplete通知
      */
     private void delayDemo(){
-        Observable.just(1,2,3).delay(5,TimeUnit.SECONDS,AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+        Observable.just(1,2,3).delay(5,TimeUnit.SECONDS,Schedulers.immediate()).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
                 System.out.println("delay(long,TimeUnit) onNext : " + integer + " 所在线程："+ Thread.currentThread().getName());
@@ -425,7 +424,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
 }
 
 

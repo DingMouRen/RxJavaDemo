@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.dingmouren.rxjavademo.R;
 import com.dingmouren.rxjavademo.examples.ExampleActivity;
 import com.dingmouren.rxjavademo.examples.event.ClickEvent;
-import com.dingmouren.rxjavademo.rx.RxBus;
+import com.dingmouren.rxjavademo.examples.rx.RxBus;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
